@@ -1,1 +1,1 @@
-# JavaFx Chart Project
+# JavaFX Chart Project
