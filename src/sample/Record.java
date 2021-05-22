@@ -1,31 +1,25 @@
-package app;
+package sample;
 
-public class Country
-{
-
-
-    private String key;
+public class Record {
+    private String year;
     private String name;
     private String country;
-    private int year;
     private int value;
     private String category;
 
-
-
-    public String getKey() {
-        return key;
+    public String getYear() {
+        return year;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setYear(String year) {
+        this.year = year;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String key) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -35,14 +29,6 @@ public class Country
 
     public void setCountry(String country) {
         this.country = country;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
     }
 
     public int getValue() {
@@ -61,8 +47,6 @@ public class Country
         this.category = category;
     }
 
-    @Override
-    public String toString() {
-        return " [ "+this.key+ " : "+ this.country+" : " + this.name+ " : " + this.year +" : "+ this.value +" : "+ this.category+ " ]";
-    }
+
+
 }
