@@ -38,8 +38,6 @@ public class DataHandler extends DefaultHandler {
         }
 
 
-
-
         if (qName.equalsIgnoreCase("field")) {
             String key = attributes.getValue("key");
             currentRecord.setKey(key);

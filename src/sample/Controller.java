@@ -1,20 +1,12 @@
 package sample;
-import javafx.event.ActionEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 public class Controller {
     private File selectedFile;
@@ -30,14 +22,14 @@ public class Controller {
     private final double titleX = titleText.getX();
     private final double labelX = xAxisLabel.getX();
 
-    public void readFile() throws IOException, ParserConfigurationException, SAXException {
+    public void readFile() throws IOException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Data Files", "*.xml", "*.txt"));
         selectedFile = fileChooser.showOpenDialog(selectFileButton.getParent().getScene().getWindow());
         fileControl(selectedFile);
     }
 
-    private void fileControl(File file) throws IOException, ParserConfigurationException, SAXException {
+    private void fileControl(File file) throws IOException {
         if (file != null) {
             getFileExtension(file);
         } else {
@@ -56,8 +48,6 @@ public class Controller {
         extension = fileName.substring(fileName.length() - 3);
         if (extension.equals("txt")) {
             data = TextParser.Parse(file);
-
-
         } else {
             data = XMLParser.Parse(file);
         }
