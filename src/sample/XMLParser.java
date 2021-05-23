@@ -1,11 +1,28 @@
 package sample;
 
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+
 
 public class XMLParser extends Parser{
-    static Data Parse(File file) throws FileNotFoundException {
-        System.out.println("xml parser");
-        return new Data();
+    static Data Parse(File file) {
+        Data data;
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser saxParser;
+        DataHandler dataHandler = new DataHandler();
+        try {
+            saxParser = factory.newSAXParser();
+            saxParser.parse(file, dataHandler);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            e.printStackTrace();
+        }
+
+        data = dataHandler.getResult();
+        return data;
     }
 }

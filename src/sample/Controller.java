@@ -12,6 +12,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 public class Controller {
     private File selectedFile;
@@ -27,14 +30,14 @@ public class Controller {
     private final double titleX = titleText.getX();
     private final double labelX = xAxisLabel.getX();
 
-    public void readFile() throws IOException {
+    public void readFile() throws IOException, ParserConfigurationException, SAXException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Data Files", "*.xml", "*.txt"));
         selectedFile = fileChooser.showOpenDialog(selectFileButton.getParent().getScene().getWindow());
         fileControl(selectedFile);
     }
 
-    private void fileControl(File file) throws IOException {
+    private void fileControl(File file) throws IOException, ParserConfigurationException, SAXException {
         if (file != null) {
             getFileExtension(file);
         } else {
@@ -47,22 +50,24 @@ public class Controller {
         }
     }
 
-    private void getFileExtension(File file) throws IOException {
+    private void getFileExtension(File file) throws IOException{
         String extension;
         String fileName = file.toString();
-        extension = fileName.substring(fileName.length() - 3, fileName.length());
+        extension = fileName.substring(fileName.length() - 3);
         if (extension.equals("txt")) {
             data = TextParser.Parse(file);
-            data.printRecords();
-            titleText.setText(data.title);
-            titleText.setX(titleX - titleText.getLayoutBounds().getWidth() / 2);
-            titleText.setVisible(true);
-            xAxisLabel.setText(data.xAxisLabel);
-            xAxisLabel.setX(labelX- xAxisLabel.getLayoutBounds().getWidth() / 2);
-            xAxisLabel.setVisible(true);
+
+
         } else {
-            XMLParser.Parse(file);
+            data = XMLParser.Parse(file);
         }
+        titleText.setText(data.title);
+        titleText.setX(titleX - titleText.getLayoutBounds().getWidth() / 2);
+        titleText.setVisible(true);
+        xAxisLabel.setText(data.xAxisLabel);
+        xAxisLabel.setX(labelX- xAxisLabel.getLayoutBounds().getWidth() / 2);
+        xAxisLabel.setVisible(true);
+        data.printRecords();
     }
 
 

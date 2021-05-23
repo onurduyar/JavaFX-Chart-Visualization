@@ -1,11 +1,22 @@
 package sample;
 
 public class Record {
+
+
+    private String key;
     private String year;
     private String name;
     private String country;
     private int value;
     private String category;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getYear() {
         return year;
