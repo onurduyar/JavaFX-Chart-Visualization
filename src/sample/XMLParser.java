@@ -21,8 +21,24 @@ public class XMLParser extends Parser{
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
-
         data = dataHandler.getResult();
         return data;
     }
+    static Data Parse(String url) {
+        Data data = new Data();
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser saxParser;
+        DataHandler dataHandler = new DataHandler();
+        try {
+            saxParser = factory.newSAXParser();
+            saxParser.parse(url, dataHandler);
+            data = dataHandler.getResult();
+            data.setSuccess(1);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+           // e.printStackTrace();
+        }
+        return data;
+    }
+
+
 }
