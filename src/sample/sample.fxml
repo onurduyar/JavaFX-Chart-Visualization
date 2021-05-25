@@ -11,6 +11,7 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="638.0" prefWidth="839.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
@@ -20,9 +21,9 @@
          <toggleGroup>
             <ToggleGroup fx:id="group" />
          </toggleGroup></RadioButton>
-      <RadioButton layoutX="146.0" layoutY="582.0" mnemonicParsing="false" text="Bar Chart" toggleGroup="$group" />
+      <RadioButton fx:id="barRadio" layoutX="146.0" layoutY="582.0" mnemonicParsing="false" onAction="#actionBarRadio" text="Bar Chart" toggleGroup="$group" />
       <Button layoutX="674.0" layoutY="578.0" mnemonicParsing="false" text="Start Animation" />
-      <LineChart layoutX="59.0" layoutY="135.0" prefHeight="398.0" prefWidth="708.0">
+      <LineChart layoutX="59.0" layoutY="135.0" prefHeight="398.0" prefWidth="708.0" visible="false">
          <xAxis>
             <CategoryAxis side="BOTTOM" />
          </xAxis>
@@ -30,7 +31,7 @@
             <NumberAxis side="LEFT" />
          </yAxis>
       </LineChart>
-      <BarChart layoutX="59.0" layoutY="135.0" prefHeight="398.0" prefWidth="708.0">
+      <BarChart fx:id="barChart" layoutX="59.0" layoutY="135.0" prefHeight="398.0" prefWidth="708.0" title="tsasasasa">
          <xAxis>
             <CategoryAxis side="BOTTOM" />
          </xAxis>
@@ -45,5 +46,10 @@
       <Line endX="12.0" endY="2.0" layoutX="185.0" layoutY="38.0" startX="12.0" startY="24.0" stroke="#8d8d8d" />
       <Text fx:id="titleText" layoutX="402.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" visible="false" />
       <Text layoutX="413.0" layoutY="546.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" fx:id="xAxisLabel" />
+      <Label fx:id="flashText" layoutX="308.0" layoutY="550.0" text="The file has been read." visible="false">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

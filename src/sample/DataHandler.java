@@ -19,13 +19,12 @@ public class DataHandler extends DefaultHandler {
 
     @Override
     public void startDocument(){
-        System.out.println("Start document");
         data.records = new ArrayList<Record>();
     }
 
     @Override
     public void endDocument(){
-        System.out.println("End document");
+        // end of this document
     }
 
     @Override
