@@ -32,8 +32,16 @@ public class Data {
         System.out.println(categories.toString());
     }
     public void printRecords(){
+        int i = 1;
+        int j = 0;
         for (Record record : records){
-            System.out.println(record.getYear() + record.getName() + record.getCountry() + record.getValue() + record.getCategory());
+            System.out.println(record.getYear() + " " + record.getName() +  " " + record.getCountry() + " "  +  record.getValue() + " " + record.getCategory() + " " + i);
+            if(i == recordsNumber.get(j)){
+                System.out.println("--------------------------------------------------------");
+                j++;
+                i = 0;
+            }
+            i++;
         }
         System.out.println(recordsNumber.size());
     }

@@ -2,6 +2,8 @@ package sample;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javafx.animation.*;
 import javafx.fxml.FXML;
@@ -55,6 +57,7 @@ public class Controller {
         extension = fileName.substring(fileName.length() - 3);
         if (extension.equals("txt")) {
             data = TextParser.Parse(file);
+            sortTxt();
         } else {
             data = XMLParser.Parse(file);
         }
@@ -116,6 +119,25 @@ public class Controller {
         }
         else {
             barChart.setTitle(data.title);
+        }
+    }
+
+    public void sortTxt(){
+
+        int count = 0;
+
+        for (int i = 0, j = 0; j < data.recordsNumber.size() && i < data.recordsNumber.get(j);){
+            for (int k = 0; k < data.recordsNumber.get(j) - (i + 1); k++) {
+                if (data.records.get(k + count).getValue() < data.records.get(k + count + 1).getValue()) {
+                    Collections.swap(data.records, k + count, k + count + 1);
+                }
+            }
+            i++;
+            if (i == data.recordsNumber.get(j) - 1){
+                count = count + data.recordsNumber.get(j);
+                j++;
+                i = 0;
+            }
         }
     }
 }
