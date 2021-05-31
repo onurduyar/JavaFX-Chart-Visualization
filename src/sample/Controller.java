@@ -1,4 +1,5 @@
 package sample;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -7,6 +8,9 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
@@ -103,8 +107,15 @@ public class Controller {
     }
 
     public void actionBarRadio(){
-        barChart = new javafx.scene.chart.BarChart<String,Number>(new CategoryAxis(),new NumberAxis());
-        barChart.setTitle("title");
+        if (data == null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Alert");
+            alert.setHeaderText("Please enter a valid URL or choose a file.");
+            alert.setContentText("File not found.");
+            alert.showAndWait();
+        }
+        else {
+            barChart.setTitle(data.title);
+        }
     }
-
 }
