@@ -1,22 +1,31 @@
 package sample;
-import java.awt.*;
+
+import javafx.geometry.Orientation;
+import javafx.scene.layout.*;
+
 import java.io.File;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import javafx.animation.*;
 import javafx.fxml.FXML;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
+
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 public class Controller {
+
     private File selectedFile;
     private Data data;
 
@@ -28,10 +37,20 @@ public class Controller {
 
     @FXML
     private Label flashText = new Label();
+
     @FXML
     private RadioButton barRadio = new RadioButton();
+
     @FXML
-    private javafx.scene.chart.BarChart<String,Number> barChart;
+    private GridPane grid =new GridPane();
+
+    @FXML
+    private VBox vBox = new VBox();
+
+    @FXML
+    private VBox vBoxText = new VBox();
+
+
     public void readFile() throws IOException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Data Files", "*.xml", "*.txt"));
@@ -120,9 +139,6 @@ public class Controller {
             alert.setContentText("File not found.");
             alert.showAndWait();
         }
-        else {
-            barChart.setTitle(data.title);
-        }
     }
 
     public void sortTxt(){
@@ -145,10 +161,8 @@ public class Controller {
     }
 
     public void sortXml(){
-
-
-        ArrayList<Record> array = new ArrayList<>();
         int counter = 0;
+        ArrayList<Record> array = new ArrayList<>();
         String first = data.records.get(0).getName();
         int recordsNumber = 0;
         String year = data.records.get(0).getYear();
@@ -170,7 +184,7 @@ public class Controller {
                 break;
             }
         }
-
+            data.recordsNumber.add(counter);
         for (int i = 1; i <= counter; i++){
             for (Record record : data.records){
                 if (record.getYear().equals(year)){
@@ -198,5 +212,57 @@ public class Controller {
                 i = 0;
             }
         }
+    }
+    public void createChart(){
+        ArrayList<Record> topTen = new ArrayList<Record>();
+        long  maxValue;
+        maxValue = data.type.equals("txt") ?  (data.records.get(data.records.size()-data.recordsNumber.get(data.recordsNumber.size()-1)).getValue()) : (data.records.get(data.records.size()-data.recordsNumber.get(data.recordsNumber.size()-2)).getValue());
+        int k = 0;
+        Text barText;
+        ArrayList<Bar> barList = new ArrayList<>();
+        ArrayList<Rectangle> rect = new ArrayList<Rectangle>();
+        ArrayList<Text> barTextList = new ArrayList<Text>();
+        for (int i = 0;(data.type.equals("xml") && i < data.recordsNumber.get(1)) || i < data.recordsNumber.size();i++){
+            if (i != 0){
+                if (data.type.equals("txt")) {
+                    k += data.recordsNumber.get(i-1);
+                }
+                else {
+                    k += data.recordsNumber.get(0);
+                }
+            }
+            for (int j = k; j < k + 10;j++) {
+                Record record = data.records.get(j);
+                Bar bar = new Bar(record.getName(),record.getCategory(),record.getValue(),record.getCountry(),record.getYear(), ((long) (record.getValue() * vBox.getWidth()) / maxValue));
+                barList.add(bar);
+                topTen.add(record);
+                rect.add(bar.bar);
+                barText = new Text(record.getName());
+                barText.setFont(new Font(11));
+                barTextList.add(barText);
+            }
+            for (Record record:topTen) {
+                System.out.println(record.toString());
+            }
+            System.out.println("-----------------------------------------");
+            topTen.clear();
+            barList.clear();
+            if ((data.type.equals("xml") && i != data.recordsNumber.get(1)-1) || data.type.equals("txt") && i != data.recordsNumber.size() -1 ) {
+                rect.clear();
+                barTextList.clear();
+            }
+        }
+        vBox.setSpacing(20);
+        vBox.setStyle("-fx-background-color: #89608E;");
+        vBox.getChildren().addAll(rect);
+        vBoxText.getChildren().addAll(barTextList);
+        vBoxText.setSpacing(30);
+
+        ArrayList<Text> categories = new ArrayList<Text>();
+        for (int i = 0; i < data.categories.size();i++) {
+            categories.add(new Text(data.categories.get(i)));
+            categories.get(i).setFill(Color.rgb(new Random().nextInt(255),new Random().nextInt(255),new Random().nextInt(255)));
+        }
+
     }
 }

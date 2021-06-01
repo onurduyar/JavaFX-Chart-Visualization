@@ -10,7 +10,6 @@ public class DataHandler extends DefaultHandler {
     ArrayList<Record> result;
     Record currentRecord;
     private String currentAttr = "";
-
     Data data = new Data();
 
     public Data getResult(){

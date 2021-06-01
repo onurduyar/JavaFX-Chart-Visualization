@@ -58,6 +58,15 @@ public class Record {
         this.category = category;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "Record{" +
+                "key='" + key + '\'' +
+                ", year='" + year + '\'' +
+                ", name='" + name + '\'' +
+                ", country='" + country + '\'' +
+                ", value=" + value +
+                ", category='" + category + '\'' +
+                '}';
+    }
 }
