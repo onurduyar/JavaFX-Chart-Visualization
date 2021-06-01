@@ -27,6 +27,7 @@ public class TextParser extends Parser {
                 data.records.add(record);
             }
         }
+        data.type = "txt";
         return data;
     }
 }

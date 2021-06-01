@@ -60,6 +60,7 @@ public class Controller {
             sortTxt();
         } else {
             data = XMLParser.Parse(file);
+            sortXml();
         }
         final Timeline timeline = new Timeline();
         timeline.setCycleCount(2);
@@ -72,6 +73,7 @@ public class Controller {
         ));
         timeline.play();
         data.createCategories();
+
         data.printRecords();
     }
 
@@ -91,6 +93,7 @@ public class Controller {
                         ));
                 timeline.play();
                 data.createCategories();
+                sortXml();
                 data.printRecords();
             }else {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -135,6 +138,62 @@ public class Controller {
             i++;
             if (i == data.recordsNumber.get(j) - 1){
                 count = count + data.recordsNumber.get(j);
+                j++;
+                i = 0;
+            }
+        }
+    }
+
+    public void sortXml(){
+
+
+        ArrayList<Record> array = new ArrayList<>();
+        int counter = 0;
+        String first = data.records.get(0).getName();
+        int recordsNumber = 0;
+        String year = data.records.get(0).getYear();
+
+
+        for (Record record : data.records){
+
+            if(year.equals(record.getYear())){
+                recordsNumber++;
+            }
+        }
+
+        data.recordsNumber.add(recordsNumber);
+
+        for (Record record : data.records){
+            if (record.getName().equals(first)){
+                counter++;
+            } else{
+                break;
+            }
+        }
+
+        for (int i = 1; i <= counter; i++){
+            for (Record record : data.records){
+                if (record.getYear().equals(year)){
+                    array.add(record);
+                }
+            }
+
+            year = data.records.get(i).getYear();
+        }
+
+        data.records = array;
+
+        int count = 0;
+
+        for (int i = 0, j = 0; j < counter && i < data.recordsNumber.get(0);){
+            for (int k = 0; k < data.recordsNumber.get(0) - (i + 1); k++) {
+                if (data.records.get(k + count).getValue() < data.records.get(k + count + 1).getValue()) {
+                    Collections.swap(data.records, k + count, k + count + 1);
+                }
+            }
+            i++;
+            if (i == data.recordsNumber.get(0) - 1){
+                count = count + data.recordsNumber.get(0);
                 j++;
                 i = 0;
             }

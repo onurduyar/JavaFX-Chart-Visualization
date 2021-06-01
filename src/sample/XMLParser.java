@@ -22,6 +22,7 @@ public class XMLParser extends Parser{
             e.printStackTrace();
         }
         data = dataHandler.getResult();
+        data.type = "xml";
         return data;
     }
     static Data Parse(String url) {
@@ -34,6 +35,7 @@ public class XMLParser extends Parser{
             saxParser.parse(url, dataHandler);
             data = dataHandler.getResult();
             data.setSuccess(1);
+            data.type = "xml";
         } catch (ParserConfigurationException | SAXException | IOException e) {
            // e.printStackTrace();
         }

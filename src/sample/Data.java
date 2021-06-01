@@ -11,6 +11,7 @@ public class Data {
     public ArrayList<Integer> recordsNumber = new ArrayList<Integer>();
     public ArrayList<Record> records = new ArrayList<Record>();
     public ArrayList<String> categories = new ArrayList<String>();
+    public String type;
 
     public int getSuccess() {
         return success;
@@ -36,14 +37,16 @@ public class Data {
         int j = 0;
         for (Record record : records){
             System.out.println(record.getYear() + " " + record.getName() +  " " + record.getCountry() + " "  +  record.getValue() + " " + record.getCategory() + " " + i);
-            if(i == recordsNumber.get(j)){
+            if(type.equals("txt") && i == recordsNumber.get(j)){
                 System.out.println("--------------------------------------------------------");
                 j++;
+                i = 0;
+            }else if(type.equals("xml") && i == recordsNumber.get(0)){
+                System.out.println("--------------------------------------------------------");
                 i = 0;
             }
             i++;
         }
-        System.out.println(recordsNumber.size());
     }
 
 }
