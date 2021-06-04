@@ -1,27 +1,22 @@
 package sample;
 import javafx.scene.layout.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import javafx.animation.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 public class Controller {
     private File selectedFile;
-    private Data data;
+    private Data data = new Data();
 
     @FXML
     private Button selectFileButton;
@@ -34,6 +29,10 @@ public class Controller {
 
     @FXML
     private RadioButton barRadio = new RadioButton();
+
+    @FXML
+
+    private RadioButton lineRadio = new RadioButton();
 
     @FXML
     private FlowPane flowPane =new FlowPane();
@@ -50,8 +49,16 @@ public class Controller {
     @FXML
     private Button AnimationButton = new Button();
 
-    private Color[] colorArray = {Color.web("#008080"), Color.web("#556b2f"), Color.web("#800000"), Color.web("#483d8b"), Color.web("#008000"), Color.web("#008080"), Color.web("#b8860b"), Color.web("#000080"), Color.web("#9acd32"), Color.web("#8b008b"), Color.web("#ff0000"), Color.web("#00ced1"), Color.web("#00ff00"), Color.web("#00fa9a"), Color.web("#8a2be2"), Color.web("#00ffff"), Color.web("#00bfff"), Color.web("#0000ff"), Color.web("#ff00ff"), Color.web("#1e90ff"), Color.web("#db7093"), Color.web("#f0e68c"), Color.web("#ff1493"), Color.web("#ffa07a"), Color.web("#ee82ee")};
-    private HashMap<String, Color> colorMap= new HashMap<String, Color>();
+    @FXML
+    private Text titleText = new Text();
+
+    @FXML
+    private Text labelText = new Text();
+
+    @FXML
+    private Text textYear = new Text();
+
+    BarChart barChart;
 
     public void readFile() throws IOException {
         FileChooser fileChooser = new FileChooser();
@@ -79,9 +86,12 @@ public class Controller {
         if (extension.equals("txt")) {
             data = TextParser.Parse(file);
             sortTxt();
+            barChart = new BarChart(data.title,data.xAxisLabel,titleText,labelText);
+
         } else {
             data = XMLParser.Parse(file);
             sortXml();
+            barChart = new BarChart(data.title,data.xAxisLabel,titleText,labelText);
         }
 
         final Timeline timeline = new Timeline();
@@ -144,7 +154,6 @@ public class Controller {
     }
 
     public void sortTxt(){
-
         int count = 0;
 
         for (int i = 0, j = 0; j < data.recordsNumber.size() && i < data.recordsNumber.get(j);){
@@ -215,115 +224,22 @@ public class Controller {
             }
         }
     }
-    int startStop = 0;
-    int isFinished = 0;
-    int status = 0;
-    int i, k = 0;
-    Text barText;
-    Text valueText;
-    Timeline timeline = new Timeline();
+
     public void createBarChart(){
-        ArrayList<Record> topTen = new ArrayList<Record>();
-        long  maxValue;
-        maxValue = data.type.equals("txt") ?  (data.records.get(data.records.size()-data.recordsNumber.get(data.recordsNumber.size()-1)).getValue()) : (data.records.get(data.records.size()-data.recordsNumber.get(data.recordsNumber.size()-2)).getValue());
-        ArrayList<Text> values = new ArrayList<Text>();
-        ArrayList<Bar> barList = new ArrayList<Bar>();
-        ArrayList<Rectangle> rect = new ArrayList<Rectangle>();
-        ArrayList<Text> barTextList = new ArrayList<Text>();
-        ArrayList<Text> categories = new ArrayList<Text>();
-
-        flowPane.setHgap(10);
-        flowPane.setVgap(10);
-        if (status == 1) {
-            k = 0;
-            categories.clear();
-            timeline.getKeyFrames().clear();
-            flowPane.getChildren().clear();
+        if (!barRadio.isSelected() && !lineRadio.isSelected()){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Alert");
+            alert.setHeaderText("Please select a radiobutton.");
+            alert.showAndWait();
         }
-
-        for (int i = 0; i < data.categories.size();i++) {
-            categories.add(new Text(data.categories.get(i)));
-            colorMap.put(data.categories.get(i), colorArray[i]);
-            categories.get(i).setFill(colorMap.get(data.categories.get(i)));
-
+        else if(barRadio.isSelected()){
+            barChart.createBarChart(data,flowPane,vBox,vBoxText,vBoxValue,AnimationButton,textYear);
         }
-        flowPane.getChildren().addAll(categories);
-        startStop++;
-        if (startStop % 2 == 0){
-            timeline.stop();
-            return;
+        else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Alert");
+            alert.setHeaderText("Hocam üzgünüz LineChart'ı yapamadık :(.");
+            alert.showAndWait();
         }
-        for (i = 0;(data.type.equals("xml") && i <= data.recordsNumber.get(1)) || i <= data.recordsNumber.size();i++){
-
-            status = 1;
-            vBox.setSpacing(20);
-            vBox.setStyle("-fx-background-color: #89608E;");
-            vBoxText.setSpacing(30);
-            vBoxValue.setSpacing(30);
-
-            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 100), actionEvent -> {
-                if (i >= 0 && (i <= data.recordsNumber.size() || (data.type.equals("xml") && i <= data.recordsNumber.get(1)))){
-
-                    if (data.type.equals("txt")) {
-                        k += data.recordsNumber.get(data.recordsNumber.size() - (i));
-                    }
-                    else {
-                        k += data.recordsNumber.get(0);
-                    }
-                }
-                for (int j = k; j < k + 10;j++) {
-                    Record record = data.records.get(j);
-                    Bar bar = new Bar(record.getName(),record.getCategory(),record.getValue(),record.getCountry(),record.getYear(), ((long) (record.getValue() * vBox.getWidth()) / maxValue));
-                    barList.add(bar);
-                    topTen.add(record);
-                    bar.bar.setFill(colorMap.get(bar.getCategory()));
-                    rect.add(bar.bar);
-                    valueText = new Text(String.valueOf(record.getValue()));
-                    valueText.setFont(new Font(11));
-                    values.add(valueText);
-                    barText = new Text(record.getName());
-                    barText.setFont(new Font(11));
-                    barTextList.add(barText);
-                }
-                for (Record record:topTen) {
-                    System.out.println(record.toString());
-                }
-                System.out.println("-----------------------------------------");
-                vBox.getChildren().addAll(rect);
-                vBoxText.getChildren().addAll(barTextList);
-                vBoxValue.getChildren().addAll(values);
-                if (i == 2){
-                    isFinished = 1;
-                }
-                if(isFinished == 0){
-                    AnimationButton.setText("Stop Animation");
-
-                }
-                else {
-                    AnimationButton.setText("Start Animation");
-                    isFinished = 0;
-                }
-            }));
-            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 100 + 100), actionEvent -> {
-                vBox.getChildren().clear();
-                vBoxText.getChildren().clear();
-                vBoxValue.getChildren().clear();
-
-
-            }));
-            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 100 + 100), actionEvent -> {
-                    values.clear();
-                    topTen.clear();
-                    barList.clear();
-                    rect.clear();
-                    barTextList.clear();
-                    i--;
-            }));
-        }
-        timeline.setCycleCount(1);
-        for (int i = 0; i < 5; i++){
-            timeline.getKeyFrames().remove(timeline.getKeyFrames().size() - 1);
-        }
-        timeline.play();
     }
 }
