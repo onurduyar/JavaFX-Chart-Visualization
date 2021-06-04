@@ -16,7 +16,7 @@ public class Main extends Application {
 
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("sample.fxml")));
         primaryStage.setTitle("Animated Chart Visualization");
-        primaryStage.setScene(new Scene(root, 1000, 650));
+        primaryStage.setScene(new Scene(root, 1040, 650));
         primaryStage.show();
     }
 

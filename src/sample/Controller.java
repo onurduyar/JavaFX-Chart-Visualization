@@ -215,11 +215,13 @@ public class Controller {
             }
         }
     }
+    int startStop = 0;
     int isFinished = 0;
     int status = 0;
     int i, k = 0;
     Text barText;
     Text valueText;
+    Timeline timeline = new Timeline();
     public void createBarChart(){
         ArrayList<Record> topTen = new ArrayList<Record>();
         long  maxValue;
@@ -232,7 +234,6 @@ public class Controller {
 
         flowPane.setHgap(10);
         flowPane.setVgap(10);
-        Timeline timeline = new Timeline();
         if (status == 1) {
             k = 0;
             categories.clear();
@@ -247,7 +248,13 @@ public class Controller {
 
         }
         flowPane.getChildren().addAll(categories);
+        startStop++;
+        if (startStop % 2 == 0){
+            timeline.stop();
+            return;
+        }
         for (i = 0;(data.type.equals("xml") && i <= data.recordsNumber.get(1)) || i <= data.recordsNumber.size();i++){
+
             status = 1;
             vBox.setSpacing(20);
             vBox.setStyle("-fx-background-color: #89608E;");
@@ -285,11 +292,16 @@ public class Controller {
                 vBox.getChildren().addAll(rect);
                 vBoxText.getChildren().addAll(barTextList);
                 vBoxValue.getChildren().addAll(values);
+                if (i == 2){
+                    isFinished = 1;
+                }
                 if(isFinished == 0){
                     AnimationButton.setText("Stop Animation");
+
                 }
                 else {
                     AnimationButton.setText("Start Animation");
+                    isFinished = 0;
                 }
             }));
             timeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 100 + 100), actionEvent -> {
@@ -313,6 +325,5 @@ public class Controller {
             timeline.getKeyFrames().remove(timeline.getKeyFrames().size() - 1);
         }
         timeline.play();
-        isFinished = 1;
     }
 }
