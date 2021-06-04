@@ -1,25 +1,13 @@
 package sample;
-
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
 import javafx.scene.layout.*;
 
 import java.io.File;
 import java.io.IOException;
-
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-
 import javafx.animation.*;
 import javafx.fxml.FXML;
-
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,7 +20,6 @@ import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 public class Controller {
-
     private File selectedFile;
     private Data data;
 
@@ -56,6 +43,12 @@ public class Controller {
 
     @FXML
     private VBox vBoxText = new VBox();
+
+    @FXML
+    private VBox vBoxValue = new VBox();
+
+    @FXML
+    private Button AnimationButton = new Button();
 
     private Color[] colorArray = {Color.web("#008080"), Color.web("#556b2f"), Color.web("#800000"), Color.web("#483d8b"), Color.web("#008000"), Color.web("#008080"), Color.web("#b8860b"), Color.web("#000080"), Color.web("#9acd32"), Color.web("#8b008b"), Color.web("#ff0000"), Color.web("#00ced1"), Color.web("#00ff00"), Color.web("#00fa9a"), Color.web("#8a2be2"), Color.web("#00ffff"), Color.web("#00bfff"), Color.web("#0000ff"), Color.web("#ff00ff"), Color.web("#1e90ff"), Color.web("#db7093"), Color.web("#f0e68c"), Color.web("#ff1493"), Color.web("#ffa07a"), Color.web("#ee82ee")};
     private HashMap<String, Color> colorMap= new HashMap<String, Color>();
@@ -90,6 +83,7 @@ public class Controller {
             data = XMLParser.Parse(file);
             sortXml();
         }
+
         final Timeline timeline = new Timeline();
         timeline.setCycleCount(2);
         timeline.setAutoReverse(true);
@@ -101,7 +95,6 @@ public class Controller {
         ));
         timeline.play();
         data.createCategories();
-
         data.printRecords();
     }
 
@@ -222,36 +215,47 @@ public class Controller {
             }
         }
     }
-
-
+    int isFinished = 0;
+    int status = 0;
     int i, k = 0;
     Text barText;
-
-    public void createChart(){
+    Text valueText;
+    public void createBarChart(){
         ArrayList<Record> topTen = new ArrayList<Record>();
         long  maxValue;
         maxValue = data.type.equals("txt") ?  (data.records.get(data.records.size()-data.recordsNumber.get(data.recordsNumber.size()-1)).getValue()) : (data.records.get(data.records.size()-data.recordsNumber.get(data.recordsNumber.size()-2)).getValue());
-        //int k = 0;
-        //Text barText;
-        ArrayList<Bar> barList = new ArrayList<>();
+        ArrayList<Text> values = new ArrayList<Text>();
+        ArrayList<Bar> barList = new ArrayList<Bar>();
         ArrayList<Rectangle> rect = new ArrayList<Rectangle>();
         ArrayList<Text> barTextList = new ArrayList<Text>();
         ArrayList<Text> categories = new ArrayList<Text>();
+
+        flowPane.setHgap(10);
+        flowPane.setVgap(10);
+        Timeline timeline = new Timeline();
+        if (status == 1) {
+            k = 0;
+            categories.clear();
+            timeline.getKeyFrames().clear();
+            flowPane.getChildren().clear();
+        }
+
         for (int i = 0; i < data.categories.size();i++) {
             categories.add(new Text(data.categories.get(i)));
             colorMap.put(data.categories.get(i), colorArray[i]);
             categories.get(i).setFill(colorMap.get(data.categories.get(i)));
 
         }
-        Timeline timeline = new Timeline();
-        for (i = 0;(data.type.equals("xml") && i < data.recordsNumber.get(1)) || i <= data.recordsNumber.size();i++){
-
+        flowPane.getChildren().addAll(categories);
+        for (i = 0;(data.type.equals("xml") && i <= data.recordsNumber.get(1)) || i <= data.recordsNumber.size();i++){
+            status = 1;
             vBox.setSpacing(20);
             vBox.setStyle("-fx-background-color: #89608E;");
             vBoxText.setSpacing(30);
+            vBoxValue.setSpacing(30);
 
             timeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 100), actionEvent -> {
-                if (i >= 0 && i <= data.recordsNumber.size()){
+                if (i >= 0 && (i <= data.recordsNumber.size() || (data.type.equals("xml") && i <= data.recordsNumber.get(1)))){
 
                     if (data.type.equals("txt")) {
                         k += data.recordsNumber.get(data.recordsNumber.size() - (i));
@@ -267,6 +271,9 @@ public class Controller {
                     topTen.add(record);
                     bar.bar.setFill(colorMap.get(bar.getCategory()));
                     rect.add(bar.bar);
+                    valueText = new Text(String.valueOf(record.getValue()));
+                    valueText.setFont(new Font(11));
+                    values.add(valueText);
                     barText = new Text(record.getName());
                     barText.setFont(new Font(11));
                     barTextList.add(barText);
@@ -277,38 +284,35 @@ public class Controller {
                 System.out.println("-----------------------------------------");
                 vBox.getChildren().addAll(rect);
                 vBoxText.getChildren().addAll(barTextList);
+                vBoxValue.getChildren().addAll(values);
+                if(isFinished == 0){
+                    AnimationButton.setText("Stop Animation");
+                }
+                else {
+                    AnimationButton.setText("Start Animation");
+                }
+            }));
+            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 100 + 100), actionEvent -> {
+                vBox.getChildren().clear();
+                vBoxText.getChildren().clear();
+                vBoxValue.getChildren().clear();
+
 
             }));
-
             timeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 100 + 100), actionEvent -> {
-
-                    vBox.getChildren().clear();
-                    vBoxText.getChildren().clear();
-
-
-            }));
-
-            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 100 + 100), actionEvent -> {
-
+                    values.clear();
                     topTen.clear();
                     barList.clear();
-
                     rect.clear();
                     barTextList.clear();
                     i--;
             }));
         }
         timeline.setCycleCount(1);
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 5; i++){
             timeline.getKeyFrames().remove(timeline.getKeyFrames().size() - 1);
         }
-
         timeline.play();
-        //timeline.getKeyFrames().clear();
-
-
-        flowPane.getChildren().addAll(categories);
-        flowPane.setHgap(10);
-        flowPane.setVgap(10);
+        isFinished = 1;
     }
 }
